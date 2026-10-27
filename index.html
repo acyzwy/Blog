@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宇宙无垠 | 个人博客</title>
+  <meta name="description" content="宇宙无垠的个人博客，记录技术与生活。">
+
+  <!-- favicon -->
+  <link rel="icon" href="assets/images/favicon.png" type="image/png">
+
+  <!-- 预连接，加速 CDN 资源 -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://v1.hitokoto.cn">
+
+  <!-- 提前应用主题，避免首屏闪烁（与 theme.js 逻辑保持一致） -->
+<script>
+  (function () {
+    try {
+      var m = localStorage.getItem('yzwy-theme') || 'system';
+      var dark = m === 'dark' ||
+        ((!m || m === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme-mode', m);
+    } catch (e) {}
+  })();
+</script>
+  
+  <!-- 不蒜子 -->
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  <!-- 代码高亮主题（亮/暗两套，由 theme.js 动态切换） -->
+  <link rel="stylesheet" id="hljs-theme-light"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" id="hljs-theme-dark"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" disabled>
+
+  <!-- 站点样式 -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dark.css">
+</head>
+<body>
+
+  <!-- ============ 全局加载遮罩 ============ -->
+  <div class="loading-overlay" id="loadingOverlay" hidden>
+    <div class="spinner" aria-hidden="true"></div>
+    <p>加载中…</p>
+  </div>
+
+  <!-- ============ 导航栏 ============ -->
+  <header class="navbar">
+    <div class="navbar-inner container">
+      <a class="logo" href="#/home" aria-label="返回首页">
+        <img class="logo-icon" src="assets/images/favicon.png" alt="Logo">
+        <span class="logo-text">宇宙无垠</span>
+      </a>
+
+      <div class="nav-actions">
+        <button class="icon-btn" id="searchBtn" type="button" aria-label="搜索">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M21 21l-4.3-4.3"></path>
+          </svg>
+        </button>
+
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="切换主题">
+          <!-- 月亮：暗色模式显示 -->
+          <svg id="themeIconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+          </svg>
+          <!-- 太阳：亮色模式显示 -->
+          <svg id="themeIconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+          </svg>
+          <!-- 跟随系统：基于 Lucide Sun-Moon 的融合图标（一半太阳+一半月亮） -->
+          <svg id="themeIconAuto" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <!-- 左半：月亮（暗色风格） -->
+            <path d="M12 2v2" />
+            <path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715" />
+            <!-- 右半：太阳（亮色风格） -->
+            <path d="M16 12a4 4 0 0 0-4-4" />
+            <path d="m19 5-1.256 1.256" />
+            <path d="M20 12h2" />
+          </svg>
+        </button>
+
+        <button class="icon-btn" id="menuBtn" type="button" aria-label="打开菜单">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ 搜索浮层 ============ -->
+  <div class="search-overlay" id="searchOverlay" role="dialog" aria-modal="true" aria-label="搜索文章" hidden>
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="M21 21l-4.3-4.3"></path>
+        </svg>
+        <input id="searchInput" type="search" placeholder="搜索文章标题或摘要…（Ctrl+K 快速唤起）" autocomplete="off">
+        <button class="search-clear" id="searchClearBtn" type="button" aria-label="关闭搜索">&times;</button>
+      </div>
+      <div class="search-results" id="searchResults">
+        <p class="search-hint">输入关键词开始搜索</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 侧边栏 ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="侧边栏">
+    <div class="sidebar-inner">
+      <div class="sidebar-profile">
+        <img src="assets/images/avatar.png" alt="作者头像" loading="lazy">
+        <h3>宇宙无垠</h3>
+        <p>共 <span id="sidebarPostCount">0</span> 篇文章</p>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="sidebar-link active" href="#/home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 10.5L12 3l9 7.5"></path>
+            <path d="M5 9.5V21h14V9.5"></path>
+          </svg>
+          首页
+        </a>
+        <a class="sidebar-link" href="#/about">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 11v5"></path>
+            <path d="M12 8h.01"></path>
+          </svg>
+          关于
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p>探索宇宙，记录生活。</p>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-mask" id="sidebarMask" hidden></div>
+
+  <!-- ============ 主内容 ============ -->
+  <main class="main">
+
+    <!-- 首页：全屏 Hero + 文章列表 -->
+    <section class="page home-page" id="homePage">
+      <div class="hero">
+        <div class="hero-bg" aria-hidden="true"></div>
+        <div class="hero-overlay" aria-hidden="true"></div>
+
+        <div class="hero-content">
+          <img class="hero-avatar" src="assets/images/avatar.png" alt="作者头像">
+          <h1 class="hero-name">宇宙无垠</h1>
+          <p class="hero-hitokoto" id="hitokoto">正在加载一言…</p>
+        </div>
+
+<!-- 跳动的向下箭头（点击或滚动滚轮平滑下滑） -->
+<button class="scroll-down" id="scrollDownBtn" type="button" aria-label="滚动到文章列表">
+  <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 5v14M5 12l7 7 7-7"/>
+  </svg>
+</button>
+      </div>
+
+      <div class="post-list-section" id="postList">
+        <div class="container">
+          <h2 class="section-title">文章</h2>
+          <div class="post-grid" id="postListContainer"></div>
+          <nav class="pagination" id="pagination" aria-label="文章分页"></nav>
+        </div>
+      </div>
+    </section>
+
+    <!-- 文章详情页 -->
+    <section class="page post-page" id="postPage" hidden>
+      <div class="container container-narrow">
+        <article class="post-detail">
+          <h1 class="post-detail-title" id="postDetailTitle"></h1>
+          <div class="post-detail-meta" id="postDetailMeta"></div>
+          <div class="post-content" id="postDetailContent"></div>
+
+          <div class="post-footer">
+            <!-- 版权声明：CC BY-SA 4.0 三枚官方图标，整块点击新窗口打开协议页 -->
+            <a class="post-copyright"
+               href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh_CN"
+               target="_blank" rel="noopener"
+               title="本文采用 CC BY-SA 4.0 知识共享许可协议"
+               aria-label="CC BY-SA 4.0 知识共享许可协议">
+              <!-- CC -->
+              <svg class="post-copyright-icon" viewBox="5.5 -3.5 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle fill="#FFFFFF" cx="37.785" cy="28.501" r="28.836"/>
+                <path d="M37.441-3.5c8.951,0,16.572,3.125,22.857,9.372c3.008,3.009,5.295,6.448,6.857,10.314c1.561,3.867,2.344,7.971,2.344,12.314c0,4.381-0.773,8.486-2.314,12.313c-1.543,3.828-3.82,7.21-6.828,10.143c-3.123,3.085-6.666,5.448-10.629,7.086c-3.961,1.638-8.057,2.457-12.285,2.457s-8.276-0.808-12.143-2.429c-3.866-1.618-7.333-3.961-10.4-7.027c-3.067-3.066-5.4-6.524-7-10.372S5.5,32.767,5.5,28.5c0-4.229,0.809-8.295,2.428-12.2c1.619-3.905,3.972-7.4,7.057-10.486C21.08-0.394,28.565-3.5,37.441-3.5z M37.557,2.272c-7.314,0-13.467,2.553-18.458,7.657c-2.515,2.553-4.448,5.419-5.8,8.6c-1.354,3.181-2.029,6.505-2.029,9.972c0,3.429,0.675,6.734,2.029,9.913c1.353,3.183,3.285,6.021,5.8,8.516c2.514,2.496,5.351,4.399,8.515,5.715c3.161,1.314,6.476,1.971,9.943,1.971c3.428,0,6.75-0.665,9.973-1.999c3.219-1.335,6.121-3.257,8.713-5.771c4.99-4.876,7.484-10.99,7.484-18.344c0-3.543-0.648-6.895-1.943-10.057c-1.293-3.162-3.18-5.98-5.654-8.458C50.984,4.844,44.795,2.272,37.557,2.272z M37.156,23.187l-4.287,2.229c-0.458-0.951-1.019-1.619-1.685-2c-0.667-0.38-1.286-0.571-1.858-0.571c-2.856,0-4.286,1.885-4.286,5.657c0,1.714,0.362,3.084,1.085,4.113c0.724,1.029,1.791,1.544,3.201,1.544c1.867,0,3.181-0.915,3.944-2.743l3.942,2c-0.838,1.563-2,2.791-3.486,3.686c-1.484,0.896-3.123,1.343-4.914,1.343c-2.857,0-5.163-0.875-6.915-2.629c-1.752-1.752-2.628-4.19-2.628-7.313c0-3.048,0.886-5.466,2.657-7.257c1.771-1.79,4.009-2.686,6.715-2.686C32.604,18.558,35.441,20.101,37.156,23.187z M55.613,23.187l-4.229,2.229c-0.457-0.951-1.02-1.619-1.686-2c-0.668-0.38-1.307-0.571-1.914-0.571c-2.857,0-4.287,1.885-4.287,5.657c0,1.714,0.363,3.084,1.086,4.113c0.723,1.029,1.789,1.544,3.201,1.544c1.865,0,3.18-0.915,3.941-2.743l4,2c-0.875,1.563-2.057,2.791-3.541,3.686c-1.486,0.896-3.105,1.343-4.857,1.343c-2.896,0-5.209-0.875-6.941-2.629c-1.736-1.752-2.602-4.19-2.602-7.313c0-3.048,0.885-5.466,2.658-7.257c1.77-1.79,4.008-2.686,6.713-2.686C51.117,18.558,53.938,20.101,55.613,23.187z"/>
+              </svg>
+              <!-- BY -->
+              <svg class="post-copyright-icon" viewBox="5.5 -3.5 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle fill="#FFFFFF" cx="37.637" cy="28.806" r="28.276"/>
+                <g>
+                  <path d="M37.443-3.5c8.988,0,16.57,3.085,22.742,9.257C66.393,11.967,69.5,19.548,69.5,28.5c0,8.991-3.049,16.476-9.145,22.456C53.879,57.319,46.242,60.5,37.443,60.5c-8.649,0-16.153-3.144-22.514-9.43C8.644,44.784,5.5,37.262,5.5,28.5c0-8.761,3.144-16.342,9.429-22.742C21.101-0.415,28.604-3.5,37.443-3.5z M37.557,2.272c-7.276,0-13.428,2.553-18.457,7.657c-5.22,5.334-7.829,11.525-7.829,18.572c0,7.086,2.59,13.22,7.77,18.398c5.181,5.182,11.352,7.771,18.514,7.771c7.123,0,13.334-2.607,18.629-7.828c5.029-4.838,7.543-10.952,7.543-18.343c0-7.276-2.553-13.465-7.656-18.571C50.967,4.824,44.795,2.272,37.557,2.272z M46.129,20.557v13.085h-3.656v15.542h-9.944V33.643h-3.656V20.557c0-0.572,0.2-1.057,0.599-1.457c0.401-0.399,0.887-0.6,1.457-0.6h13.144c0.533,0,1.01,0.2,1.428,0.6C45.918,19.5,46.129,19.986,46.129,20.557z M33.042,12.329c0-3.008,1.485-4.514,4.458-4.514s4.457,1.504,4.457,4.514c0,2.971-1.486,4.457-4.457,4.457S33.042,15.3,33.042,12.329z"/>
+                </g>
+              </svg>
+              <!-- SA -->
+              <svg class="post-copyright-icon" viewBox="5.5 -3.5 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle fill="#FFFFFF" cx="36.944" cy="28.631" r="29.105"/>
+                <g>
+                  <path d="M37.443-3.5c8.951,0,16.531,3.105,22.742,9.315C66.393,11.987,69.5,19.548,69.5,28.5c0,8.954-3.049,16.457-9.145,22.514C53.918,57.338,46.279,60.5,37.443,60.5c-8.649,0-16.153-3.143-22.514-9.429C8.644,44.786,5.5,37.264,5.5,28.501c0-8.723,3.144-16.285,9.429-22.685C21.138-0.395,28.643-3.5,37.443-3.5z M37.557,2.272c-7.276,0-13.428,2.572-18.457,7.715c-5.22,5.296-7.829,11.467-7.829,18.513c0,7.125,2.59,13.257,7.77,18.4c5.181,5.182,11.352,7.771,18.514,7.771c7.123,0,13.334-2.609,18.629-7.828c5.029-4.876,7.543-10.99,7.543-18.343c0-7.313-2.553-13.485-7.656-18.513C51.004,4.842,44.832,2.272,37.557,2.272z M23.271,23.985c0.609-3.924,2.189-6.962,4.742-9.114c2.552-2.152,5.656-3.228,9.314-3.228c5.027,0,9.029,1.62,12,4.856c2.971,3.238,4.457,7.391,4.457,12.457c0,4.915-1.543,9-4.627,12.256c-3.088,3.256-7.086,4.886-12.002,4.886c-3.619,0-6.743-1.085-9.371-3.257c-2.629-2.172-4.209-5.257-4.743-9.257H31.1c0.19,3.886,2.533,5.829,7.029,5.829c2.246,0,4.057-0.972,5.428-2.914c1.373-1.942,2.059-4.534,2.059-7.771c0-3.391-0.629-5.971-1.885-7.743c-1.258-1.771-3.066-2.657-5.43-2.657c-4.268,0-6.667,1.885-7.2,5.656h2.343l-6.342,6.343l-6.343-6.343L23.271,23.985L23.271,23.985z"/>
+                </g>
+              </svg>
+            </a>
+
+            <!-- 返回首页：同样是白块按钮 -->
+            <a class="back-home" href="#/home">← 返回首页</a>
+          </div>
+        </article>
+
+        <!-- 评论区（giscus，主题跟随站点设置） -->
+        <section class="comments-section" id="commentsSection" aria-label="评论区">
+          <h2 class="section-title">评论</h2>
+          <div class="comments-container" id="commentsContainer"></div>
+        </section>
+      </div>
+    </section>
+
+    <!-- 关于页 -->
+    <section class="page about-page" id="aboutPage" hidden>
+      <div class="container container-narrow">
+        <h1 class="section-title">关于</h1>
+        <div class="about-content">
+          <h2>你好，我是宇宙无垠 👋</h2>
+          <p>这里是我的个人博客，用来记录技术学习、生活感悟与奇思妙想。</p>
+          <h2>联系我</h2>
+          <p>邮箱：acyzwy@qq.com</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ 页脚 ============ -->
+  <footer class="footer">
+    <div class="container">
+      <p>本站总访问量 <span id="busuanzi_value_site_pv"></span> 次</p>
+      <p>本站访客数 <span id="busuanzi_value_site_uv"></span> 人</p>
+      <p>Copyright © by 宇宙无垠 All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ============ 提示气泡 ============ -->
+  <div class="toast" id="toast" hidden></div>
+
+  <!-- highlight.js（CDN；如需离线可下载到 assets/libs/） -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
+  <!-- 站点脚本（defer 保证按序执行） -->
+  <script src="assets/js/utils.js" defer></script>
+  <script src="assets/js/theme.js" defer></script>
+  <script src="assets/js/comments.js" defer></script>
+  <script src="assets/js/posts.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
+  <script src="assets/js/router.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>
