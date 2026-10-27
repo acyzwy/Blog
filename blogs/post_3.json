@@ -1,0 +1,6 @@
+{
+    "id": 3,
+    "title": "海信电视打开adb调试的方法",
+    "date": "2026-09-03",
+    "content": "<ol><li>设置→声音→高级设置→选择到声音平衡；</li><li>遥控器依次交替按下确认键和菜单键，重复三次，进入雪花屏；</li><li>接着按菜单键两次，调出工厂模式菜单；</li><li>选择“选项” 标签，将 To Fac 的值从 U（用户模式）修改为 M（工厂模式）即可。</li></ol><blockquote>To Fac：To Factory，切换到工厂状态<br>U：User，用户模式<br>M：Manufacturing，工厂模式</blockquote><p>完成操作后会启用无线调试（重启不会关闭），这样我们就可以用工具（比如甲壳虫adb助手）调试电视了。</p><p><br></p><p>更多内容可看<a href=\"https://www.znds.com/tv-1247333-1-1.html\" target=\"_blank\">原帖</a>。</p>"
+}

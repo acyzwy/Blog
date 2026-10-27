@@ -1,0 +1,6 @@
+{
+    "id": 1,
+    "title": "Hello,World!",
+    "date": "2026-08-08",
+    "content": "<p>这是本博客的第一篇文章。</p><h2>本站特性</h2><ul><li>纯静态部署</li><li>文章数据来自 JSON 文件</li><li>支持亮 / 暗模式，自动跟随系统</li><li>代码高亮、响应式布局</li></ul><h2>示例代码</h2><p>下面是一段 JavaScript 示例：</p><pre><code class=\"language-javascript\">function greet(name) {\r\n  const message = `Hello, ${name}!`;\r\n  console.log(message);\r\n}\r\n\r\ngreet('World');</code></pre><p><br></p>"
+}
