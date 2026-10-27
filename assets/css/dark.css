@@ -1,0 +1,93 @@
+/* ==================================================================
+   暗色主题
+   - 跟随系统：@media (prefers-color-scheme: dark)
+   - 手动强制：[data-theme="dark"]（由 theme.js 写入）
+   取值统一映射 style.css 中定义的 --*-dark 变量，避免重复。
+   ================================================================== */
+
+/* 1) 跟随系统暗色（当页面未强制指定亮色时生效） */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: var(--bg-dark);
+    --surface: var(--surface-dark);
+    --surface-2: var(--surface-2-dark);
+    --surface-3: var(--surface-3-dark);
+    --text: var(--text-dark);
+    --text-muted: var(--text-muted-dark);
+    --border: var(--border-dark);
+    --accent: var(--accent-dark);
+    --accent-soft: var(--accent-soft-dark);
+    --accent-2: var(--accent-2-dark);
+    --navbar-bg: var(--navbar-bg-dark);
+    --overlay-bg: var(--overlay-bg-dark);
+    --shadow-sm: var(--shadow-sm-dark);
+    --shadow-md: var(--shadow-md-dark);
+    --card-tag-bg: var(--card-tag-bg-dark);
+    --card-tag-text: var(--card-tag-text-dark);
+    --card-tag-border: var(--card-tag-border-dark);
+    --code-bg: var(--code-bg-dark);
+    --code-text: var(--code-text-dark);
+  }
+}
+
+/* 2) 手动强制暗色（与系统浅色/深色无关，只要 data-theme="dark" 即生效） */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: var(--bg-dark);
+  --surface: var(--surface-dark);
+  --surface-2: var(--surface-2-dark);
+  --surface-3: var(--surface-3-dark);
+  --text: var(--text-dark);
+  --text-muted: var(--text-muted-dark);
+  --border: var(--border-dark);
+  --accent: var(--accent-dark);
+  --accent-soft: var(--accent-soft-dark);
+  --accent-2: var(--accent-2-dark);
+  --navbar-bg: var(--navbar-bg-dark);
+  --overlay-bg: var(--overlay-bg-dark);
+  --shadow-sm: var(--shadow-sm-dark);
+  --shadow-md: var(--shadow-md-dark);
+  --card-tag-bg: var(--card-tag-bg-dark);
+  --card-tag-text: var(--card-tag-text-dark);
+  --card-tag-border: var(--card-tag-border-dark);
+  --code-bg: var(--code-bg-dark);
+  --code-text: var(--code-text-dark);
+}
+
+/* 3) 暗色下的局部微调（Hero 遮罩更深，保证文字可读） */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .hero-overlay {
+    background: linear-gradient(180deg, rgba(4, 6, 12, 0.55) 0%, rgba(4, 6, 12, 0.72) 100%);
+  }
+}
+:root[data-theme="dark"] .hero-overlay {
+  background: linear-gradient(180deg, rgba(4, 6, 12, 0.55) 0%, rgba(4, 6, 12, 0.72) 100%);
+}
+
+/* 4) 暗色下原本硬编码为白块的组件（文章页底部“版权声明”与“返回首页”），
+      改为跟随主题变量，保证暗色切换完整生效 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .post-copyright,
+  :root:not([data-theme="light"]) .back-home {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+}
+:root[data-theme="dark"] .post-copyright,
+:root[data-theme="dark"] .back-home {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+/* 5) 深色主题下文章列表封面图略微压暗，避免亮度过高刺眼 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .post-card-img {
+    filter: brightness(0.8);
+  }
+}
+:root[data-theme="dark"] .post-card-img {
+  filter: brightness(0.8);
+}
