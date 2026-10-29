@@ -1,2 +1,2 @@
-个人blog
+个人Blog  
 https://acyzwy.github.io/Blog/
